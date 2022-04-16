@@ -646,6 +646,50 @@
         }
     };
 
+
+    RESHOP.initProductsObserver = function () {
+        const observeProducts = (entries) => {
+            const products = entries.map(({ target, intersectionRatio }, index) => {
+                const parent = target?.closest?.('div.product-l')
+                    || target?.closest?.('div.product-o')
+                    || target?.closest?.('div.product-m')
+                    || target?.closest?.('div.product-bs')
+
+                const price = parseFloat(parent?.querySelector?.("[class$='__price']")?.innerText?.replace("$", ''))
+                const name = parent?.querySelector?.("[class$='__name']")?.innerText
+                const category = parent?.querySelector?.("[class$='__category']")?.innerText
+                const url = parent?.querySelector?.("a")?.href
+
+                if (intersectionRatio === 1 && price && name && category) {
+                    return ({
+                        product_id: target.src.replace(/[^\d]/g, ''),
+                        sku: target.src.replace(/[^\d]/g, ''),
+                        category,
+                        name,
+                        brand: '',
+                        variant: '',
+                        price,
+                        quantity: 1,
+                        coupon: '',
+                        currency: 'USD',
+                        position: index,
+                        url,
+                        image_url: target.src
+                    })
+                }
+                return null
+
+            }).filter(Boolean)
+            products.length && console.log(products)
+        }
+        const observer = new window.IntersectionObserver(observeProducts, { threshold: 1 })
+        // Get products to observe from images that contain `product` in its url
+        Array.from(
+            document.querySelectorAll("img"))
+            .filter(el => el.src.includes('product'))
+            .forEach(el => observer.observe(el))
+    }
+
     // Check everything including DOM elements and images loaded
     $(window).on('load', function () {
         //RESHOP.showNewsletterModal();
@@ -654,6 +698,7 @@
             $primarySlider.data('owl.carousel').options.autoplay = true;
             $primarySlider.trigger('refresh.owl.carousel');
         }
+        RESHOP.initProductsObserver()
     });
 
 
