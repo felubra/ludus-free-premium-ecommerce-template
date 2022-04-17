@@ -680,7 +680,7 @@
                 return null
 
             }).filter(Boolean)
-            products.length && console.log(products)
+            Array.isArray(products) && products.forEach(product => rudderanalytics.track("Product Viewed", product))
         }
         const observer = new window.IntersectionObserver(observeProducts, { threshold: 1 })
         // Get products to observe from images that contain `product` in its url
