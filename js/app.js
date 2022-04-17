@@ -647,7 +647,7 @@
     };
 
 
-    RESHOP.initProductsObserver = function () {
+    RESHOP.initObservers = function () {
         const observeProducts = (entries) => {
             const products = entries.map(({ target, intersectionRatio }, index) => {
                 const parent = target?.closest?.('div.product-l')
@@ -682,7 +682,7 @@
             }).filter(Boolean)
             Array.isArray(products) && products.forEach(product => rudderanalytics.track("Product Viewed", product))
         }
-        const observer = new window.IntersectionObserver(observeProducts, { threshold: 1 })
+        const productsObserver = new window.IntersectionObserver(observeProducts, { threshold: 1 })
         // Get products to observe from images that contain `product` in its url
         Array.from(
             document.querySelectorAll("img"))
