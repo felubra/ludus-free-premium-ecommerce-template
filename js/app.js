@@ -1,9 +1,10 @@
 /**
  * This is main script file that contains JS code.
  */
+// Main Object
+var RESHOP = {};
+
 (function ($) {
-    // Main Object
-    var RESHOP = {};
 
     // Predefined variables
     var
@@ -659,7 +660,7 @@
         const product_id = productImage.src.replace(/[^\d]/g, '')
         const sku = productImage.src.replace(/[^\d]/g, '')
 
-        return {
+        return name && price ? {
             product_id,
             sku,
             category,
@@ -673,7 +674,7 @@
             position: index,
             url,
             image_url: productImage.src
-        }
+        } : null
     }
 
     RESHOP.initObservers = function () {
@@ -688,19 +689,39 @@
             Array.isArray(products) && products.forEach(product => rudderanalytics.track("Product Viewed", product))
         }
 
+        const observePromotions = (entries) => {
+            const promotions = entries.map(({ target, intersectionRatio }, index) => {
+                const url = new URL(target.href)
+                const promotion_id = url.pathname.replace(".html", "").replace("/", "")
+                const name = target?.querySelector(".promotion__text-1")?.innerText
+                const creative = target?.querySelector(".promotion__text-2")?.innerText
+                const position = index
+
+                if (intersectionRatio === 1 && name && creative) {
+                    return ({
+                        promotion_id,
+                        name,
+                        creative,
+                        position
                     })
                 }
                 return null
 
             }).filter(Boolean)
-            Array.isArray(products) && products.forEach(product => rudderanalytics.track("Product Viewed", product))
+            Array.isArray(promotions) && promotions.forEach(promotion => rudderanalytics.track("Promotion Viewed", promotion))
         }
+
         const productsObserver = new window.IntersectionObserver(observeProducts, { threshold: 1 })
+        const promotionsObserver = new window.IntersectionObserver(observePromotions, { threshold: 1 })
         // Get products to observe from images that contain `product` in its url
         Array.from(
             document.querySelectorAll("img"))
             .filter(el => el.src.includes('product'))
             .forEach(el => productsObserver.observe(el))
+        // Get promotions to observe
+        Array.from(
+            document.querySelectorAll("a.promotion"))
+            .forEach(el => promotionsObserver.observe(el))
     }
 
     // Check everything including DOM elements and images loaded
