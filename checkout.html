@@ -2771,6 +2771,62 @@
         <!--====== App ======-->
         <script src="js/app.js"></script>
 
+        <script>
+            rudderanalytics && rudderanalytics.track("Checkout Started", {
+                order_id: "1234",
+                affiliation: "",
+                value: 379,
+                revenue: 379,
+                shipping: 4,
+                tax: 0,
+                discount: 0,
+                coupon: "",
+                currency: "USD",
+                products: [
+                    {
+                        product_id: "3",
+                        sku: "3",
+                        name: "Yellow Wireless Headphone",
+                        price: 150,
+                        quantity: 1,
+                        category: "Eletronics",
+                        url: "https://www.website.com/product/path",
+                        image_url: "https://www.website.com/product/path.jpg",
+                    },
+                    {
+                        product_id: "8",
+                        sku: "8",
+                        name: "Nikon DSLR Camera 4k",
+                        price: 150,
+                        quantity: 1,
+                        category: "Eletronics",
+                        url: "https://www.website.com/product/path",
+                        image_url: "https://www.website.com/product/path.jpg",
+                    },
+                    {
+                        product_id: "8",
+                        sku: "8",
+                        name: "New Dress D Nice Elegant",
+                        price: 150,
+                        quantity: 1,
+                        category: "Games",
+                        url: "https://www.website.com/product/path",
+                        image_url: "https://www.website.com/product/path.jpg",
+                    },
+                    {
+                        product_id: "8",
+                        sku: "8",
+                        name: "New Fashion D Nice Elegant",
+                        price: 150,
+                        quantity: 1,
+                        category: "Games",
+                        url: "https://www.website.com/product/path",
+                        image_url: "https://www.website.com/product/path.jpg",
+                    },
+                ],
+            })
+        </script>
+
         <!--====== Noscript ======-->
         <noscript>
             <div class="app-setting">
