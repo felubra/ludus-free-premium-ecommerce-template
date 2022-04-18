@@ -4167,6 +4167,18 @@
         <!--====== App ======-->
         <script src="js/app.js"></script>
 
+        <script>
+            rudderanalytics && rudderanalytics.track("Product Product List Viewed", {
+                list_id: 'list1',
+                category: 'Search',
+                products: Array.from(
+                    document.querySelectorAll("img"))
+                    .filter(el => el.src.includes('product'))
+                    .map((el, index) => RESHOP.getProductInfo(el, index))
+                    .filter(Boolean)
+            })
+        </script>
+
         <!--====== Noscript ======-->
         <noscript>
             <div class="app-setting">
