@@ -646,35 +646,48 @@
         }
     };
 
+    RESHOP.getProductInfo = function (productImage, index = 0) {
+        const parent = productImage?.closest?.('div.product-l')
+            || productImage?.closest?.('div.product-o')
+            || productImage?.closest?.('div.product-m')
+            || productImage?.closest?.('div.product-bs')
+
+        const price = parseFloat(parent?.querySelector?.("[class$='__price']")?.innerText?.replace("$", ''))
+        const name = parent?.querySelector?.("[class$='__name']")?.innerText
+        const category = parent?.querySelector?.("[class$='__category']")?.innerText
+        const url = parent?.querySelector?.("a")?.href
+        const product_id = productImage.src.replace(/[^\d]/g, '')
+        const sku = productImage.src.replace(/[^\d]/g, '')
+
+        return {
+            product_id,
+            sku,
+            category,
+            name,
+            brand: '',
+            variant: '',
+            price,
+            quantity: 1,
+            coupon: '',
+            currency: 'USD',
+            position: index,
+            url,
+            image_url: productImage.src
+        }
+    }
 
     RESHOP.initObservers = function () {
         const observeProducts = (entries) => {
             const products = entries.map(({ target, intersectionRatio }, index) => {
-                const parent = target?.closest?.('div.product-l')
-                    || target?.closest?.('div.product-o')
-                    || target?.closest?.('div.product-m')
-                    || target?.closest?.('div.product-bs')
+                if (intersectionRatio === 1) {
+                    return RESHOP.getProductInfo(target, index)
+                }
+                return null
 
-                const price = parseFloat(parent?.querySelector?.("[class$='__price']")?.innerText?.replace("$", ''))
-                const name = parent?.querySelector?.("[class$='__name']")?.innerText
-                const category = parent?.querySelector?.("[class$='__category']")?.innerText
-                const url = parent?.querySelector?.("a")?.href
+            }).filter(Boolean)
+            Array.isArray(products) && products.forEach(product => rudderanalytics.track("Product Viewed", product))
+        }
 
-                if (intersectionRatio === 1 && price && name && category) {
-                    return ({
-                        product_id: target.src.replace(/[^\d]/g, ''),
-                        sku: target.src.replace(/[^\d]/g, ''),
-                        category,
-                        name,
-                        brand: '',
-                        variant: '',
-                        price,
-                        quantity: 1,
-                        coupon: '',
-                        currency: 'USD',
-                        position: index,
-                        url,
-                        image_url: target.src
                     })
                 }
                 return null
@@ -687,7 +700,7 @@
         Array.from(
             document.querySelectorAll("img"))
             .filter(el => el.src.includes('product'))
-            .forEach(el => observer.observe(el))
+            .forEach(el => productsObserver.observe(el))
     }
 
     // Check everything including DOM elements and images loaded
@@ -698,7 +711,7 @@
             $primarySlider.data('owl.carousel').options.autoplay = true;
             $primarySlider.trigger('refresh.owl.carousel');
         }
-        RESHOP.initProductsObserver()
+        RESHOP.initObservers()
     });
 
 
